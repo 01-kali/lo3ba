@@ -47,3 +47,8 @@ controls
 - ESC: quit the game
  
 - red X button: also quits the game
+
+## authors
+
+*zelkalai*
+*mel-atti*
