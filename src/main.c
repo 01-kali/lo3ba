@@ -34,6 +34,16 @@ int	game_loop(t_mlx *mlx)
 	unsigned long	current_time;
 
 	current_time = get_current_time();
+
+	mlx_clear_window(mlx->mlx, mlx->win);
+	ray_casting(mlx, mlx->data);
+	
+	left_click(mlx);
+	mlx_put_image_to_window(mlx->mlx, mlx->win, mlx->img.mlx_image, 0, 0);
+	
+	key_mouvment(mlx);
+	key_rotation(mlx);
+
 	if (mlx->data->mouse_moving && current_time
 		- mlx->data->last_mouse_time > 0)
 	{
@@ -41,15 +51,8 @@ int	game_loop(t_mlx *mlx)
 		mlx->data->key_pressed[4] = 0;
 		mlx->data->key_pressed[5] = 0;
 	}
-	mlx_clear_window(mlx->mlx, mlx->win);
-	ray_casting(mlx, mlx->data);
-	left_click(mlx);
-	mlx_put_image_to_window(mlx->mlx, mlx->win, mlx->img.mlx_image, 0, 0);
-	key_mouvment(mlx);
-	key_rotation(mlx);
 	return (0);
 }
-
 int	init(t_mlx *mlx, t_data *data, char *argv, t_pl *player)
 {
 	int	i;
@@ -91,12 +94,14 @@ int	main(int argc, char **argv)
 		mlx.img.mlx_image = mlx_new_image(mlx.mlx, SCREEN_WIDTH, SCREEN_HEIGHT);
 		mlx.img.image_data = mlx_get_data_addr(mlx.img.mlx_image,
 				&mlx.img.bits_per_pixel, &mlx.img.size_line, &mlx.img.endian);
-		mlx_hook(mlx.win, 2, 1L << 0, key_press, &data);
-		mlx_hook(mlx.win, 3, 1L << 1, key_release, &data);
-		mlx_hook(mlx.win, 6, 1L << 6, mouse_rotation, &data);
-		mlx_hook(mlx.win, 4, 1L << 2, mouse_click, &data);
-		mlx_hook(mlx.win, 17, 0, red_cross, &mlx);
-		mlx_loop_hook(mlx.mlx, game_loop, &mlx);
+		
+		mlx_hook(mlx.win, 2, 1L << 0, (int (*)())key_press, &data);
+		mlx_hook(mlx.win, 3, 1L << 1, (int (*)())key_release, &data);
+		mlx_hook(mlx.win, 6, 1L << 6, (int (*)())mouse_rotation, &data);
+		mlx_hook(mlx.win, 4, 1L << 2, (int (*)())mouse_click, &data);
+		mlx_hook(mlx.win, 17, 0, (int (*)())red_cross, &mlx);
+		mlx_loop_hook(mlx.mlx, (int (*)())game_loop, &mlx);
+		
 		mlx_loop(mlx.mlx);
 		return (0);
 	}
